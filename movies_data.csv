@@ -1,0 +1,61 @@
+timestamp,name,age_range,movie,entertainment_value,story,animation_visuals,emotional_beats,humor
+9/14/2023 16:13,Tony,50+,Top Gun Maverick,5,4,5,4,4
+9/14/2023 16:14,Jean,20 - 29,Barbie,5,3,4,3,4
+9/14/2023 16:24,Kristin,20 - 29,Barbie,5,,5,5,5
+9/14/2023 16:24,Shamecca,20 - 29,Black Panther Wakanda,5,5,5,5,2
+9/14/2023 16:24,Shamecca,20 - 29,Barbie,4,3,5,1,3
+9/14/2023 16:25,Shamecca,20 - 29,Spiderman,5,3,5,3,5
+9/14/2023 16:27,Kossi,20 - 29,Barbie,4,2,3,3,3
+9/14/2023 16:29,Sean Amato,30 - 39,Oppenheimer,5,5,3,4,2
+9/14/2023 17:40,Dom,15 - 19,Spiderman,5,5,5,5,5
+9/14/2023 17:48,Sia,20 - 29,Barbie,3,3,3,3,4
+9/14/2023 17:48,Sia,20 - 29,Black Panther Wakanda,5,5,5,5,5
+9/14/2023 17:49,Sia,20 - 29,Top Gun Maverick,5,5,5,5,5
+9/14/2023 18:00,Dustin,15 - 19,The Nun II,5,5,5,4,1
+9/14/2023 18:00,Zainab,20 - 29,Black Panther Wakanda,5,5,5,5,5
+9/14/2023 18:03,Fatu,20 - 29,Black Panther Wakanda,5,5,5,,3
+9/14/2023 18:44,Sahr,15 - 19,Black Panther Wakanda,4,2,5,5,4
+9/14/2023 18:46,Marissa ,15 - 19,Black Panther Wakanda,5,5,5,5,4
+9/14/2023 18:49,Souleymane,30 - 39,Black Panther Wakanda,5,5,4,4,3
+9/14/2023 18:50,Souleymane,30 - 39,Top Gun Maverick,5,5,4,5,5
+9/14/2023 18:51,Hudson,15 - 19,Spiderman,5,5,5,5,5
+9/14/2023 19:17,Tamba ,15 - 19,Spiderman,5,5,5,5,3
+9/14/2023 19:19,Alex Luppino,15 - 19,Top Gun Maverick,5,5,4,5,4
+9/14/2023 19:19,Brandon,15 - 19,Top Gun Maverick,5,5,5,5,5
+9/14/2023 19:20,Jayden,15 - 19,The Nun II,5,5,5,5,1
+9/14/2023 19:20,Lotz,15 - 19,Oppenheimer,4,5,5,4,1
+9/14/2023 19:21,Altin,15 - 19,Spiderman,5,3,4,3,3
+9/14/2023 19:21,Dylan,15 - 19,Spiderman,4,5,5,4,2
+9/14/2023 19:21,Jared ,15 - 19,Spiderman,5,5,5,5,5
+9/14/2023 19:21,Jorja,15 - 19,Barbie,5,,5,5,5
+9/14/2023 19:22,Dixon ,15 - 19,Spiderman,5,4,4,2,4
+9/14/2023 19:22,Jeffy,15 - 19,Oppenheimer,5,5,5,5,2
+9/14/2023 19:22,Liam,40 - 49,The Nun II,5,5,5,5,5
+9/14/2023 19:23,Oscar Jablonski ,15 - 19,Spiderman,5,4,4,3,3
+9/14/2023 19:23,John,15 - 19,Black Panther Wakanda,5,5,5,5,3
+9/14/2023 19:23,chase,15 - 19,Spiderman,5,5,5,5,5
+9/14/2023 19:29,Thomas,15 - 19,Black Panther Wakanda,5,4,5,5,3
+9/14/2023 19:34,Teddy,15 - 19,Spiderman,5,4,5,3,3
+9/14/2023 19:41,Moriba,15 - 19,Black Panther Wakanda,5,5,5,5,5
+9/14/2023 19:52,Sheetal,40 - 49,Spiderman,5,4,5,5,5
+9/14/2023 20:37,Zainab,20 - 29,Barbie,5,4,5,3,5
+9/14/2023 20:38,Zainab,20 - 29,Spiderman,5,5,5,5,5
+9/14/2023 20:56,Manuela ,20 - 29,Barbie,5,5,5,5,5
+9/15/2023 1:52,Jada,20 - 29,Spiderman,4,4,4,3,4
+9/15/2023 7:00,Andy,50+,Spiderman,5,4,3,4,4
+9/15/2023 7:01,Andy,50+,Top Gun Maverick,5,4,5,4,4
+9/15/2023 9:33,Julia,20 - 29,Top Gun Maverick,5,4,4,3,3
+9/15/2023 9:33,Julia,20 - 29,Spiderman,4,4,5,4,3
+9/15/2023 11:50,Ron,20 - 29,Oppenheimer,4,4,5,4,1
+9/15/2023 14:17,Diomeris,20 - 29,Barbie,2,3,,3,3
+9/15/2023 14:30,Fanta,20 - 29,Barbie,5,4,4,3,3
+9/15/2023 16:46,Heleine,40 - 49,Oppenheimer,2,4,3,,1
+9/15/2023 16:48,Heleine,40 - 49,The Nun II,3,3,4,3,3
+9/15/2023 16:49,Heleine,40 - 49,Barbie,2,2,2,3,2
+9/15/2023 16:50,Heleine,40 - 49,Top Gun Maverick,4,3,3,3,3
+9/15/2023 16:51,Heleine,40 - 49,Black Panther Wakanda,3,4,3,3,3
+9/15/2023 21:28,Molly,20 - 29,Barbie,5,3,5,3,5
+9/15/2023 21:29,Molly,20 - 29,Black Panther Wakanda,5,4,5,4,3
+9/15/2023 21:29,Molly,20 - 29,Oppenheimer,5,5,5,4,2
+9/16/2023 10:21,Marley,30 - 39,Barbie,4,3,5,3,4
+9/16/2023 10:21,Marley,30 - 39,Black Panther Wakanda,4,3,4,4,4

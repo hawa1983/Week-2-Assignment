@@ -1,0 +1,350 @@
+---
+title: 'Week2 Assignment: SQL and R'
+author: "Fomba Kassoh"
+date: "2023-15-08"
+output:
+  pdf_document: default
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Assignment – SQL and R
+
+# Overview
+The codes below loads movie ratings data from the csv file movies_data. The data was collected from classmates and friends using a google form. The following six movies were presented in the survey: (1) Barbie, (2) Black Panther Wakanda, (3) Oppenheimer, (4) Spiderman, (5) Top Gun Maverick, (6) The Nun II. Each respondent was asked to rate the movies they have watched based on the following factors: Entertainment value, story,	animation/visuals,	emotional beats, and humor.
+
+The data collected was downloaded into a csv file (movies_data.csv). A database, movies, was created in MySQL and the survey data loaded from movies_data.csv into the database table, movies_data. In addition, a movies database table was created and loaded with information from the movies_info.csv file. A critics database table was also created and loaded with the information of the survey respondents.
+
+
+The respondent to the survey, called critics were asked to rate  
+
+Link to article:https://projects.fivethirtyeight.com/coronavirus-polls/
+link to data frame: https://raw.githubusercontent.com/hawa1983/Week1_Assignment/main/covid_approval_polls_adjusted.csv
+
+
+## Load the relevant libraries 
+We start by installing the relevant packages and loading the libraries as below
+```{r load the required libraries}
+library(tidyverse)
+library(dplyr)
+library(RMySQL)
+library(DBI)
+library(readr)
+library(keyring)
+```
+
+## Create the database connection object
+Here, we connect to the MySQL database.
+
+```{r create the connection object and connect to MySQL}
+db_host <- "localhost"
+db_port <- 5432
+db_user <- "root"
+db_password <- "7!8Kas33!4"
+movies <- "movies"
+
+
+# Create a connection object
+con <- dbConnect(MySQL(), 
+                 user = "root",
+                 password = "7!8Kas33!4",
+                 host = "localhost",
+                 name = "movies")
+
+cat("Connected to database successfully.")
+```
+## Preview the data
+
+Next we create the movies database. Dropping the database is done so that the code will reproduce the steps taken.
+
+```{r create movies database}
+
+# if exist drop movies database
+dbSendQuery(con, "DROP DATABASE IF EXISTS movies")
+
+# Create the MySQL database
+dbExecute(con, "CREATE DATABASE IF NOT EXISTS movies")
+
+# Select the movies database as the default database
+dbSendQuery(con, "USE movies")
+
+# List the databases to verify
+dbListTables(con)
+
+cat("Database created successfully.")
+```
+## Drop the database tables if they exist
+
+Here we drop the database tables so the code can reproduce them.
+
+```{r drop tables}
+tables_to_drop <- c("movies_data", "ratings", "critics", "factors", "movies", "joint_table")
+
+for (table_name in tables_to_drop) {
+  if (dbExistsTable(con, table_name)) {
+    query <- paste("DROP TABLE", table_name)
+    dbExecute(con, query)
+  }
+}
+
+
+```
+## Create the database tables
+
+Now we create the database tables
+```{r}
+create_table_query <- "
+CREATE TABLE IF NOT EXISTS movies_data (
+  time_stamp VARCHAR(255) NOT NULL,
+  critic VARCHAR(255) NOT NULL,
+  age_range VARCHAR(255) NOT NULL,
+  movie VARCHAR(255) NOT NULL,
+  entertainment_value VARCHAR(255) NOT NULL,
+  story VARCHAR(255) NOT NULL,
+  animation_visuals VARCHAR(255) NOT NULL,
+  emotional_beats VARCHAR(255) NOT NULL,
+  humor VARCHAR(255) NOT NULL
+)
+"
+dbExecute(con, create_table_query)
+
+create_table_query <- "
+CREATE TABLE IF NOT EXISTS movies (
+  movie_id INT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  release_date VARCHAR(255) NOT NULL,
+  runnunig_time INT NOT NULL,
+  budget DOUBLE NOT NULL,
+  box_office DOUBLE NOT NULL
+)
+"
+dbExecute(con, create_table_query)
+
+
+create_table_query <- "
+CREATE TABLE IF NOT EXISTS factors (
+  factor_id INT AUTO_INCREMENT PRIMARY KEY,
+  entertainment_value VARCHAR(255) NOT NULL,
+  story VARCHAR(255) NOT NULL,
+  animation_visuals VARCHAR(255) NOT NULL,
+  emotional_beats VARCHAR(255) NOT NULL,
+  humor VARCHAR(255) NOT NULL
+)
+"
+dbExecute(con, create_table_query)
+
+create_table_query <- "
+CREATE TABLE IF NOT EXISTS critics (
+  name VARCHAR(255) NOT NULL,
+  age_range VARCHAR(255) NOT NULL,
+  critic_id INT PRIMARY KEY
+)
+"
+dbExecute(con, create_table_query)
+
+create_table_query <- "
+CREATE TABLE IF NOT EXISTS joint_table (
+  critic_id INT NOT NULL,
+  movie_id INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  movie VARCHAR(255) NOT NULL,
+  FOREIGN KEY (critic_id) REFERENCES critics(critic_id),
+  FOREIGN KEY (movie_id) REFERENCES movies(movie_id)
+)
+"
+dbExecute(con, create_table_query)
+
+
+cat("Database tables successfully.")
+```
+## read the movie survey csv file into a data frame.
+
+The movie ratings survey was saved in the following directory:
+C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/
+
+```{r}
+movies_data <- read_csv('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/movies_data.csv')
+
+# preview data
+glimpse(movies_data)
+```
+## Ignore missing values in calculation
+
+The preview of the movies_data above shows that there are missing values. If we find the average rating of a critis across all the factors rated, we must ignore the missing value in order for the average to be correct.
+
+```{r}
+average_rating <- movies_data |> mutate(Avg_rating = mean(c(entertainment_value, story, animation_visuals, emotional_beats, humor), na.rm = TRUE))
+
+average_rating
+```
+
+## Replace missing values with 0
+
+```{r}
+movies_data_1 <- movies_data |>
+  mutate(entertainment_value = replace_na(entertainment_value, 0), 
+         story = replace_na(story, 0),
+         animation_visuals = replace_na(animation_visuals, 0),
+         emotional_beats = replace_na(emotional_beats, 0),
+         humor = replace_na(humor, 0)
+         )
+
+movies_data_1
+```
+
+## Replace NA in column A with the mean of column A
+
+We can also replace the missing values with the mean of the rating
+```{r}
+movies_data <- movies_data %>%
+  mutate(
+    entertainment_value = ifelse(is.na(entertainment_value), mean(entertainment_value, na.rm = TRUE), entertainment_value),
+    story = ifelse(is.na(story), mean(story, na.rm = TRUE), story),
+    animation_visuals = ifelse(is.na(animation_visuals), mean(animation_visuals, na.rm = TRUE), animation_visuals),
+    emotional_beats = ifelse(is.na(emotional_beats), mean(emotional_beats, na.rm = TRUE), emotional_beats),
+    humor = ifelse(is.na(humor), mean(humor, na.rm = TRUE), humor),
+    )
+
+movies_data
+```
+
+
+
+## Change the data types to the appropiate data type
+
+Change the timestamp data type to datetime. Change the movie data type to factors, and the ratings to integer
+
+```{r}
+movies_data <- read_csv('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/movies_data.csv',
+                        col_types = cols(
+                   timestamp = col_datetime(format = "%m/%d/%Y %H:%M")
+                 ))
+
+movies_data <- movies_data |>
+  mutate(
+    timestamp = as_datetime(timestamp),
+    movie = as_factor(movie),
+    entertainment_value = as.integer(entertainment_value),
+    story = as.integer(story),
+    animation_visuals = as.integer(animation_visuals),
+    emotional_beats = as.integer(emotional_beats),
+    humor = as.integer(humor)
+    )
+
+# overwrite the data back to the movies_data CSV file to persist the changes
+#write.csv(movies_data, "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/movies_data.csv", row.names = FALSE)
+
+glimpse(movies_data)
+```
+## Basic information about each movie
+
+Some basic information about each movie was collected from Wikipedia and saved in a csv file. The file is read into movies data frame below. The appropiate data type is assigned and the csv file overwritten to persist the changes.
+
+```{r}
+movies_df <- read_csv('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/movies.csv',
+                        col_types = cols(
+                   release_date = col_date(format = "%m/%d/%Y")
+                 ))
+
+movies_df <- movies_df |>
+  mutate(
+    id = as.integer(id),
+    movie = as_factor(name),
+    running_time = as.integer(running_time),
+    budget = as.double(budget),
+    box_office = as.double(box_office)
+    )
+
+movies_df
+```
+
+## Movie Critics
+
+A MySQL table is created for the movie critics. To get the data for the table, we create a csv file  by getting the unique values from the movies_data data frame. An id variable is added to get a unique ID for each critic
+```{r}
+
+# Select unique values from a column
+critics <- movies_data |>
+  distinct(name, age_range) 
+
+critics <- critics |>
+  mutate(id = c(1:nrow(critics))) 
+
+
+critics
+```
+## Create a joint table with critic ID and movie ID
+
+To do this, we create a left joint and select the critic and movie ids. The we load the data frame into the joint
+```{r}
+# Perform the operation
+joined_df <- movies_data |>
+  left_join(critics, by = "name") |>
+  left_join(movies_df, by = "movie") 
+
+joined_df
+joint_id_df <- joined_df |>
+  select(critic_id = id.x, movie_id = id.y, critic = name.x, movie = name.y) 
+
+write_csv(joint_id_df, "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/joint_table.csv")
+joint_id_df <- read_csv("C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/joint_table.csv")
+joint_id_df
+```
+
+
+## Load the data frames into the MySQL tables
+
+Now we will load the csv files into the MySQL tables.
+```{r}
+load_movies_data_query <- "
+  LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/movies_data.csv' 
+  INTO TABLE movies_data 
+  FIELDS TERMINATED BY ',' 
+  ENCLOSED BY '\"'
+  LINES TERMINATED BY '\n'
+  IGNORE 1 ROWS;
+  "
+
+dbExecute(con, load_movies_data_query)
+
+
+load_movies_query <- "
+  LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/movies.csv' 
+  INTO TABLE movies 
+  FIELDS TERMINATED BY ',' 
+  ENCLOSED BY '\"'
+  LINES TERMINATED BY '\n'
+  IGNORE 1 ROWS;
+  "
+
+dbExecute(con, load_movies_query)
+
+load_critics_query <- "
+  LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/critics.csv' 
+  INTO TABLE critics 
+  FIELDS TERMINATED BY ',' 
+  ENCLOSED BY '\"'
+  LINES TERMINATED BY '\n'
+  IGNORE 1 ROWS;
+  "
+dbExecute(con, load_critics_query)
+
+load_joint_table_query <- "
+  LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/joint_table.csv' 
+  INTO TABLE joint_table 
+  FIELDS TERMINATED BY ',' 
+  ENCLOSED BY '\"'
+  LINES TERMINATED BY '\n'
+  IGNORE 1 ROWS;
+  "
+
+dbExecute(con, load_joint_table_query)
+
+dbDisconnect(con)
+
+```
